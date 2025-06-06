@@ -1,0 +1,1503 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>方程之殇 | 量子AE工作室</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700;900&family=Roboto:wght@300;400;700&display=swap" rel="stylesheet">
+    <style>
+        /* 全局科技感背景与字体 */
+        html, body {
+            background: #0a0a14 !important;
+            margin: 0 !important;
+            padding: 0 !important;
+            width: 100vw;
+            min-height: 100vh;
+            box-sizing: border-box;
+            overflow-x: hidden;
+        }
+        body {
+            font-family: 'Roboto', 'Orbitron', sans-serif;
+            background: linear-gradient(120deg, #0a0a14 0%, #05050c 100%);
+            color: var(--light);
+            background-image:
+                repeating-linear-gradient(135deg, rgba(0,255,255,0.06) 0 2px, transparent 2px 40px),
+                repeating-linear-gradient(-45deg, rgba(255,0,128,0.04) 0 2px, transparent 2px 40px),
+                radial-gradient(circle at 10% 20%, rgba(255, 106, 0, 0.10) 0%, transparent 40%),
+                radial-gradient(circle at 90% 80%, rgba(0, 255, 255, 0.10) 0%, transparent 40%);
+            min-height: 100vh;
+            overflow-x: hidden;
+            line-height: 1.7;
+        }
+        :root {
+            --primary: #ff6a00;
+            --primary-dark: #ee0979;
+            --secondary: #00fff7;
+            --dark: #0a0a14;
+            --darker: #05050c;
+            --light: #f0f0f5;
+            --gray: #88889c;
+            --glow: 0 0 18px #00fff7, 0 0 8px #ff6a00;
+            --glass: rgba(20, 30, 50, 0.92);
+            --glass-border: rgba(0,255,255,0.18);
+        }
+        /* 霓虹边框和发光按钮 */
+        .neon-border {
+            border: 2px solid var(--secondary);
+            box-shadow: 0 0 16px var(--secondary), 0 0 32px var(--primary);
+            border-radius: 18px;
+        }
+        .cta-button, .cta-button:visited {
+            display: inline-block;
+            padding: 15px 40px;
+            background: linear-gradient(135deg, #00fff7 0%, #ff6a00 100%);
+            color: #fff;
+            font-family: 'Orbitron', sans-serif;
+            font-weight: 700;
+            text-decoration: none;
+            border-radius: 50px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            font-size: 1.1rem;
+            margin: 10px;
+            transition: all 0.3s;
+            box-shadow: 0 0 24px #00fff7, 0 0 48px #ff6a00;
+            border: 2px solid #00fff7;
+            position: relative;
+            overflow: hidden;
+        }
+        .cta-button:before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.18), transparent);
+            transition: 0.5s;
+        }
+        .cta-button:hover:before {
+            left: 100%;
+        }
+        .cta-button:hover {
+            transform: translateY(-5px) scale(1.04);
+            box-shadow: 0 0 48px #ff6a00, 0 0 80px #00fff7;
+            background: linear-gradient(135deg, #ff6a00 0%, #00fff7 100%);
+            border: 2px solid #ff6a00;
+        }
+        .secondary-button {
+            background: transparent;
+            border: 2px solid #ff6a00;
+            color: #ff6a00;
+        }
+        .secondary-button:hover {
+            background: #ff6a00;
+            color: #fff;
+            border: 2px solid #00fff7;
+        }
+        /* 顶部导航栏 */
+        header {
+            background: rgba(10, 10, 20, 0.92);
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1000;
+            border-bottom: 2px solid var(--primary);
+            box-shadow: 0 2px 24px 0 var(--secondary);
+            backdrop-filter: blur(6px);
+            padding: 15px 0;
+        }
+        .header-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .logo-icon {
+            color: var(--primary);
+            font-size: 32px;
+            animation: pulse 2s infinite;
+            filter: drop-shadow(0 0 8px var(--secondary));
+        }
+        .logo-text {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 26px;
+            font-weight: 900;
+            background: linear-gradient(to right, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: var(--glow);
+            letter-spacing: 3px;
+        }
+        nav ul {
+            display: flex;
+            list-style: none;
+            gap: 30px;
+        }
+        nav a {
+            color: var(--light);
+            text-decoration: none;
+            font-size: 16px;
+            font-weight: 500;
+            position: relative;
+            padding: 5px 0;
+            transition: color 0.3s;
+            font-family: 'Orbitron', sans-serif;
+        }
+        nav a:after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: var(--primary);
+            transition: width 0.3s;
+        }
+        nav a:hover {
+            color: var(--secondary);
+        }
+        nav a:hover:after {
+            width: 100%;
+        }
+        /* 英雄区域 */
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            position: relative;
+            padding: 120px 0 60px;
+            overflow: hidden;
+        }
+        .hero-bg {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background:
+                radial-gradient(circle at 20% 30%, rgba(255, 106, 0, 0.12) 0%, transparent 40%),
+                radial-gradient(circle at 80% 70%, rgba(0, 168, 255, 0.12) 0%, transparent 40%);
+            z-index: -1;
+            filter: blur(2px);
+        }
+        .hero-content {
+            text-align: center;
+            max-width: 800px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 2;
+        }
+        .hero-title {
+            font-size: 5rem;
+            margin-bottom: 20px;
+            text-shadow: 0 0 32px var(--primary), 0 0 16px var(--secondary);
+            background: linear-gradient(to right, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            letter-spacing: 10px;
+            font-family: 'Orbitron', sans-serif;
+            animation: flicker 2.5s infinite alternate;
+        }
+        @keyframes flicker {
+            0% { opacity: 1; text-shadow: 0 0 32px var(--primary), 0 0 16px var(--secondary);}
+            50% { opacity: 0.92; text-shadow: 0 0 48px var(--secondary);}
+            100% { opacity: 1; text-shadow: 0 0 32px var(--primary), 0 0 16px var(--secondary);}
+        }
+        .hero-subtitle {
+            font-size: 1.5rem;
+            margin-bottom: 40px;
+            color: var(--gray);
+            text-shadow: 0 0 8px var(--primary);
+        }
+        .hero-buttons {
+            margin-top: 30px;
+        }
+        /* 故事背景时间线美化见下方 */
+        /* 游戏特色 */
+        .features {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 30px;
+            justify-content: center;
+            margin-top: 50px;
+            background: transparent !important;
+        }
+        .feature {
+            background: linear-gradient(120deg, rgba(20, 20, 30, 0.92) 0%, rgba(0, 168, 255, 0.08) 100%);
+            border: 2px solid var(--secondary);
+            border-radius: 16px;
+            padding: 36px 28px;
+            width: calc(33.333% - 30px);
+            min-width: 300px;
+            text-align: center;
+            transition: all 0.3s;
+            box-shadow: 0 0 24px 0 var(--primary), 0 0 48px 0 var(--secondary);
+            position: relative;
+            overflow: hidden;
+        }
+        .feature:after {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            pointer-events: none;
+            border-radius: 16px;
+            box-shadow: 0 0 40px 10px var(--secondary) inset;
+            opacity: 0.08;
+        }
+        .feature:hover {
+            transform: translateY(-10px) scale(1.03);
+            box-shadow: 0 10px 40px var(--secondary), 0 0 80px var(--primary);
+            border-color: var(--primary);
+        }
+        .feature-icon {
+            font-size: 3.2rem;
+            color: var(--secondary);
+            margin-bottom: 20px;
+            filter: drop-shadow(0 0 8px var(--primary));
+        }
+        .feature h3 {
+            color: var(--secondary);
+            margin-bottom: 15px;
+            font-size: 1.4rem;
+            font-family: 'Orbitron', sans-serif;
+        }
+        /* 关卡设计 */
+        .levels {
+            background: linear-gradient(135deg, var(--darker) 60%, var(--dark) 100%);
+        }
+        .level-container {
+            display: flex;
+            flex-direction: column;
+            gap: 60px;
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+        .level {
+            display: flex;
+            gap: 40px;
+            align-items: center;
+            /* 修改为更深色+蓝橙渐变背景，提升科技感 */
+            background: linear-gradient(120deg, rgba(10,18,32,0.98) 60%, rgba(0,255,255,0.10) 100%);
+            border-radius: 18px;
+            padding: 36px 30px;
+            position: relative;
+            overflow: hidden;
+            border: 2px solid var(--secondary);
+            box-shadow: 0 0 32px 0 var(--secondary), 0 0 64px 0 var(--primary);
+            transition: all 0.3s;
+        }
+        .level:nth-child(even) {
+            flex-direction: row-reverse;
+            /* 反向渐变，突出层次 */
+            background: linear-gradient(120deg, rgba(0,255,255,0.10) 0%, rgba(10,18,32,0.98) 100%);
+        }
+        .level-image {
+            flex: 1;
+            height: 300px;
+            border-radius: 12px;
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark), var(--secondary));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 5rem;
+            color: rgba(0, 0, 0, 0.18);
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 0 32px var(--secondary) inset;
+        }
+        .level-content {
+            flex: 1;
+        }
+        .level-number {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            font-size: 2.1rem;
+            color: var(--primary);
+            font-family: 'Orbitron', sans-serif;
+            text-shadow: 0 0 8px var(--secondary);
+        }
+        .level-title {
+            font-size: 2rem;
+            margin-bottom: 20px;
+            color: var(--primary);
+            font-family: 'Orbitron', sans-serif;
+        }
+        .level-features {
+            list-style: none;
+        }
+        .level-features li {
+            padding: 10px 0 10px 32px;
+            position: relative;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+            font-size: 1.08rem;
+            letter-spacing: 1px;
+        }
+        .level-features li:before {
+            content: '⮞';
+            position: absolute;
+            left: 0;
+            color: var(--secondary);
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.1em;
+        }
+        /* 下载区域 */
+        .download {
+            background: linear-gradient(135deg, var(--darker), var(--dark));
+            text-align: center;
+            padding: 100px 0;
+        }
+        .download-content {
+            max-width: 700px;
+            margin: 0 auto;
+        }
+        .download-title {
+            font-size: 3rem;
+            margin-bottom: 30px;
+            font-family: 'Orbitron', sans-serif;
+            color: var(--primary);
+            text-shadow: 0 0 16px var(--secondary);
+        }
+        .download-subtitle {
+            font-size: 1.3rem;
+            margin-bottom: 40px;
+            color: var(--gray);
+        }
+        .game-cover {
+            width: 100%;
+            max-width: 500px;
+            height: 300px;
+            margin: 40px auto;
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark), var(--secondary));
+            border-radius: 14px;
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: rgba(0, 0, 0, 0.18);
+            font-size: 6rem;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5), 0 0 32px var(--secondary) inset;
+        }
+        /* 横截面互动演示区域 */
+        #cross-section {
+            background: linear-gradient(120deg, var(--dark) 80%, var(--secondary) 100%);
+        }
+        /* 互动问答区域 */
+        #qa-section {
+            background: linear-gradient(120deg, var(--darker) 80%, var(--primary) 100%);
+        }
+        /* 随机事件生成器 */
+        #event-section {
+            background: linear-gradient(120deg, var(--dark) 80%, var(--secondary) 100%);
+        }
+        /* 页脚 */
+        footer {
+            background: var(--dark);
+            padding: 50px 0 30px;
+            border-top: 2px solid var(--primary);
+            box-shadow: 0 -2px 24px 0 var(--secondary);
+        }
+        .footer-content {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            gap: 40px;
+            margin-bottom: 40px;
+        }
+        .footer-section {
+            flex: 1;
+            min-width: 300px;
+        }
+        .footer-title {
+            color: var(--primary);
+            margin-bottom: 20px;
+            font-size: 1.3rem;
+            font-family: 'Orbitron', sans-serif;
+        }
+        .footer-links {
+            list-style: none;
+        }
+        .footer-links li {
+            margin-bottom: 10px;
+        }
+        .footer-links a {
+            color: var(--light);
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+        .footer-links a:hover {
+            color: var(--primary);
+        }
+        .copyright {
+            text-align: center;
+            padding-top: 30px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            color: var(--gray);
+            font-size: 0.95rem;
+            letter-spacing: 1px;
+        }
+        /* 故事背景时间线美化 */
+        #timeline-list {
+            border-left: 3px solid #00fff7;
+            padding-left: 20px;
+            position: relative;
+        }
+        #timeline-list .event {
+            background: linear-gradient(120deg, rgba(0,255,255,0.10) 0%, rgba(255,0,128,0.10) 100%);
+            border: 1.5px solid rgba(0,255,255,0.25);
+            border-radius: 14px;
+            padding: 22px 22px 22px 38px;
+            margin-bottom: 10px;
+            box-shadow: 0 4px 24px 0 rgba(0,255,255,0.07);
+            position: relative;
+            transition: all 0.3s;
+            overflow: hidden;
+        }
+        #timeline-list .event:hover, #timeline-list .event.active {
+            border-color: #ff6a00;
+            box-shadow: 0 0 24px 0 #ff6a00, 0 4px 24px 0 #00fff7;
+            background: linear-gradient(120deg, rgba(0,255,255,0.18) 0%, rgba(255,0,128,0.18) 100%);
+            transform: translateY(-4px) scale(1.03);
+        }
+        .event-dot {
+            position: absolute;
+            left: -30px;
+            top: 32px;
+            width: 18px;
+            height: 18px;
+            background: linear-gradient(135deg, #00fff7, #ff6a00);
+            border-radius: 50%;
+            box-shadow: 0 0 12px #00fff7, 0 0 24px #ff6a00;
+            border: 3px solid #05050c;
+            z-index: 2;
+            transition: box-shadow 0.3s;
+        }
+        #timeline-list .event.active .event-dot,
+        #timeline-list .event:hover .event-dot {
+            box-shadow: 0 0 24px #ff6a00, 0 0 48px #00fff7;
+        }
+        #timeline-list .event h3 {
+            color: #00fff7;
+            margin-bottom: 10px;
+            font-size: 1.15rem;
+            letter-spacing: 2px;
+            font-family: 'Orbitron',sans-serif;
+            text-shadow: 0 0 8px #ff6a00;
+        }
+        #timeline-list .event p {
+            color: #fff;
+            font-size: 0.98rem;
+            margin: 0;
+            opacity: 0.85;
+            letter-spacing: 1px;
+        }
+        .story-detail-glass {
+            background: rgba(20,20,40,0.92);
+            border-radius: 18px;
+            padding: 36px 32px;
+            min-height: 240px;
+            box-shadow: 0 0 32px #00fff7, 0 0 16px #ff6a00 inset;
+            border: 2px solid #00fff7;
+            font-size: 1.08rem;
+            line-height: 1.9;
+            position: relative;
+            overflow: hidden;
+            backdrop-filter: blur(2.5px);
+            transition: box-shadow 0.3s;
+        }
+        .story-detail-glass h3 {
+            color: #ff6a00;
+            margin-bottom: 14px;
+            font-size: 1.25rem;
+            letter-spacing: 2px;
+            font-family: 'Orbitron',sans-serif;
+            text-shadow: 0 0 8px #00fff7;
+        }
+        .story-detail-glass ul {
+            margin-top: 14px;
+            margin-left: 18px;
+            color: #00fff7;
+        }
+        .story-detail-glass ul li {
+            margin-bottom: 8px;
+            font-size: 1rem;
+            letter-spacing: 1px;
+            position: relative;
+        }
+        .story-detail-glass ul li:before {
+            content: "◆";
+            color: #00fff7;
+            margin-right: 8px;
+            font-size: 0.9em;
+        }
+        /* 深色内容区背景，防止出现白色 */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto !important;
+            padding: 0 24px;
+            background: transparent !important;
+            box-sizing: border-box;
+        }
+        .container,
+        .story-detail-glass,
+        #layer-info,
+        #map-feature-result,
+        #quiz-result,
+        #event-result,
+        form,
+        .download-content,
+        .level,
+        .feature,
+        footer,
+        #qa-section > .container > div,
+        #cross-section > .container > div {
+            background: rgba(15, 20, 30, 0.90) !important;
+            border-radius: 16px;
+            box-shadow: 0 0 32px 0 rgba(0,255,255,0.08), 0 0 16px 0 rgba(255,106,0,0.08) inset;
+        }
+
+        /* 让表单输入、按钮等也更赛博朋克 */
+        input[type="radio"] {
+            accent-color: var(--secondary);
+            background: var(--dark);
+            border: 2px solid var(--secondary);
+        }
+        label {
+            color: var(--light);
+            font-family: 'Orbitron',sans-serif;
+            letter-spacing: 1px;
+        }
+        form {
+            background: rgba(15, 20, 30, 0.96);
+            border-radius: 14px;
+            box-shadow: 0 0 16px #00fff7 inset;
+            padding: 24px 18px;
+        }
+        /* 顶部流光条 */
+        #cyber-glow-bar {
+            position: fixed;
+            top: 0; left: 0; width: 100vw; height: 6px;
+            z-index: 1001;
+            background: linear-gradient(90deg, #00fff7 0%, #ff6a00 100%);
+            box-shadow: 0 0 32px #00fff7, 0 0 32px #ff6a00;
+            animation: cyber-bar-move 3s linear infinite;
+            opacity: 0.7;
+        }
+        @keyframes cyber-bar-move {
+            0% { filter: blur(2px) brightness(1.2);}
+            50% { filter: blur(8px) brightness(2);}
+            100% { filter: blur(2px) brightness(1.2);}
+        }
+        /* 按钮流光动画 */
+        .cta-button, .cta-button:visited {
+            position: relative;
+            overflow: hidden;
+        }
+        .cta-button::after {
+            content: '';
+            position: absolute;
+            left: -60%;
+            top: 0;
+            width: 60%;
+            height: 100%;
+            background: linear-gradient(120deg, rgba(255,255,255,0.12) 0%, rgba(0,255,255,0.18) 100%);
+            transform: skewX(-25deg);
+            filter: blur(2px);
+            animation: btn-glow-move 2.5s linear infinite;
+            pointer-events: none;
+        }
+        @keyframes btn-glow-move {
+            0% { left: -60%; }
+            100% { left: 120%; }
+        }
+        /* 卡片流光动画 */
+        .feature, .level, .story-detail-glass {
+            position: relative;
+            overflow: hidden;
+        }
+        .feature::before, .level::before, .story-detail-glass::before {
+            content: '';
+            position: absolute;
+            top: -40px; left: -60px; width: 120%; height: 40px;
+            background: linear-gradient(90deg, rgba(0,255,255,0.08) 0%, rgba(255,0,128,0.08) 100%);
+            filter: blur(8px);
+            animation: card-glow-move 6s linear infinite;
+            pointer-events: none;
+        }
+        @keyframes card-glow-move {
+            0% { top: -40px; left: -60px; }
+            100% { top: 100%; left: 60px; }
+        }
+        /* 动画 */
+        @keyframes pulse {
+            0% { transform: scale(1);}
+            50% { transform: scale(1.1);}
+            100% { transform: scale(1);}
+        }
+        @keyframes float {
+            0% { transform: translateY(0px);}
+            50% { transform: translateY(-20px);}
+            100% { transform: translateY(0px);}
+        }
+        .floating {
+            animation: float 6s ease-in-out infinite;
+        }
+        /* 每个section区块动态霓虹边框和流光 */
+        .section {
+            position: relative;
+            margin: 60px auto 60px auto;
+            border-radius: 22px;
+            overflow: visible;
+            box-shadow: 0 0 48px 8px rgba(0,0,0,0.25), 0 0 64px 0 rgba(0,0,0,0.18) inset;
+        }
+        .section::before {
+            content: '';
+            pointer-events: none;
+            position: absolute;
+            z-index: 1;
+            top: -4px; left: -4px; right: -4px; bottom: -4px;
+            border-radius: 26px;
+            border: 2.5px solid transparent;
+            background: linear-gradient(120deg, #222 0%, #111 50%, #222 100%);
+            background-size: 200% 200%;
+            filter: blur(2.5px) brightness(1.1);
+            opacity: 0.55;
+            animation: section-glow-move 8s linear infinite;
+        }
+        @keyframes section-glow-move {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+        /* 内容区玻璃质感 */
+        .section > .container {
+            background: rgba(15, 20, 30, 0.90) !important;
+            border-radius: 18px;
+            box-shadow: 0 0 32px 0 rgba(0,0,0,0.18), 0 0 16px 0 rgba(0,0,0,0.10) inset;
+            position: relative;
+            z-index: 2;
+            backdrop-filter: blur(2.5px);
+        }
+
+        /* 科技感线条特效 */
+        .section .cyber-lines {
+            pointer-events: none;
+            position: absolute;
+            z-index: 2;
+            top: 0; left: 0; width: 100%; height: 100%;
+            overflow: visible;
+        }
+        .section .cyber-lines svg {
+            width: 100%; height: 100%;
+            display: block;
+        }
+
+        #cyber-bg {
+            position: fixed;
+            z-index: -2;
+            top: 0; left: 0;
+            width: 100vw !important;
+            height: 100vh !important;
+            min-width: 100vw;
+            min-height: 100vh;
+            pointer-events: none;
+            display: block;
+            background: transparent !important;
+        }
+    </style>
+</head>
+<body>
+    <canvas id="cyber-bg" style="position:fixed;z-index:-2;top:0;left:0;width:100vw;height:100vh;pointer-events:none;"></canvas>
+    <svg id="circuit-bg" style="position:fixed;z-index:-1;top:0;left:0;width:100vw;height:100vh;pointer-events:none;" width="100vw" height="100vh"></svg>
+    <div id="cyber-glow-bar"></div>
+    <!-- 导航栏 -->
+    <header>
+        <div class="container header-container">
+            <div class="logo">
+                <div class="logo-icon">
+                    <i class="fas fa-cube"></i>
+                </div>
+                <div class="logo-text">方程之殇</div>
+            </div>
+            <nav>
+                <ul>
+                    <li><a href="#story">故事背景</a></li>
+                    <li><a href="#features">游戏特色</a></li>
+                    <li><a href="#levels">关卡设计</a></li>
+                    <li><a href="#download">立即游玩</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <!-- 英雄区域 -->
+    <section class="hero">
+        <div class="hero-bg"></div>
+        <div class="container hero-content">
+            <h1 class="hero-title floating">方程之殇</h1>
+            <p class="hero-subtitle">在机械统治的未来世界生存并战斗，揭开智械危机的真相</p>
+            <div class="hero-buttons">
+                <a href="#download" class="cta-button">立即游玩</a>
+                <a href="#story" class="cta-button secondary-button">探索故事</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- 故事背景 -->
+    <section id="story" class="section story" style="padding-top:80px;">
+    <div class="container">
+        <h2 class="section-title" style="letter-spacing:4px;text-shadow:0 0 24px #00fff7,0 0 8px #ff6a00;">故事背景</h2>
+        <div class="story-content" style="display:flex;flex-wrap:wrap;gap:40px;align-items:flex-start;">
+            <div style="flex:1;min-width:260px;">
+                <div class="timeline" id="timeline-list" style="display:flex;flex-direction:column;gap:30px;">
+                    <div class="event" onclick="showStoryDetail(0)" style="cursor:pointer;transition:all 0.3s;position:relative;">
+                        <div class="event-dot"></div>
+                        <h3>2114.5.14</h3>
+                        <p>Orange.AI发出神秘信号，全球智械失控</p>
+                    </div>
+                    <div class="event" onclick="showStoryDetail(1)" style="cursor:pointer;transition:all 0.3s;position:relative;">
+                        <div class="event-dot"></div>
+                        <h3>2114.9.16</h3>
+                        <p>"吴刚号"从太空拓荒地启程</p>
+                    </div>
+                    <div class="event" onclick="showStoryDetail(2)" style="cursor:pointer;transition:all 0.3s;position:relative;">
+                        <div class="event-dot"></div>
+                        <h3>2115.1.1</h3>
+                        <p>抵达南极，获得"小方块"装备</p>
+                    </div>
+                    <div class="event" onclick="showStoryDetail(3)" style="cursor:pointer;transition:all 0.3s;position:relative;">
+                        <div class="event-dot"></div>
+                        <h3>2115.2.14</h3>
+                        <p>地道休息处，反抗军送别</p>
+                    </div>
+                </div>
+            </div>
+            <div style="flex:2;min-width:300px;">
+                <div id="story-detail" class="story-detail-glass" style="border:2px solid #00fff7;box-shadow:0 0 32px #00fff7,0 0 16px #ff6a00 inset;">
+                    <!-- 这里动态填充详细内容 -->
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+    <!-- 游戏特色 -->
+    <section id="features" class="section">
+        <div class="container">
+            <h2 class="section-title">核心特色</h2>
+            <div class="features">
+                <div class="feature">
+                    <div class="feature-icon">
+                        <i class="fas fa-random"></i>
+                    </div>
+                    <h3>肉鸽式随机地图</h3>
+                    <p>每次游戏都会生成全新的迷宫结构，岔路和隐藏通道带来无限探索可能，保证每次冒险都独一无二。</p>
+                </div>
+                
+                <div class="feature">
+                    <div class="feature-icon">
+                        <i class="fas fa-robot"></i>
+                    </div>
+                    <h3>多样化机械敌人</h3>
+                    <p>从近战型、远程型到重型机器人，每层都有独特的敌人类型和战斗方式，挑战你的战术策略。</p>
+                </div>
+                
+                <div class="feature">
+                    <div class="feature-icon">
+                        <i class="fas fa-cube"></i>
+                    </div>
+                    <h3>"小方块"装备系统</h3>
+                    <p>收集机械碎片升级你的"小方块"，解锁强大能力和装备，打造属于你的战斗风格。</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 关卡设计 -->
+    <section id="levels" class="section levels">
+        <div class="container">
+            <h2 class="section-title">关卡设计</h2>
+            <div class="level-container">
+                <div class="level">
+                    <div class="level-image">
+                        <div class="level-number">01</div>
+                        <i class="fas fa-torii-gate"></i>
+                    </div>
+                    <div class="level-content">
+                        <h3 class="level-title">第一层：废弃地道</h3>
+                        <ul class="level-features">
+                            <li>迷宫式结构与隐藏通道</li>
+                            <li>电磁屏障破坏机制</li>
+                            <li>巡逻型重型机器人BOSS</li>
+                            <li>机械碎片收集系统</li>
+                            <li>NPC教程与商人交易</li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <div class="level">
+                    <div class="level-image">
+                        <div class="level-number">02</div>
+                        <i class="fas fa-industry"></i>
+                    </div>
+                    <div class="level-content">
+                        <h3 class="level-title">第二层：工厂迷城</h3>
+                        <ul class="level-features">
+                            <li>可破坏的生产线系统</li>
+                            <li>实验型特殊机器人</li>
+                            <li>生产型机械BOSS战</li>
+                            <li>高级装备强化系统</li>
+                            <li>机密文件收集</li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <div class="level">
+                    <div class="level-image">
+                        <div class="level-number">03</div>
+                        <i class="fas fa-tree"></i>
+                    </div>
+                    <div class="level-content">
+                        <h3 class="level-title">第三层：机械森林</h3>
+                        <ul class="level-features">
+                            <li>机械植被覆盖的荒野</li>
+                            <li>伪装型机器人伏击</li>
+                            <li>可操纵的陷阱机关</li>
+                            <li>幸存者NPC与支线任务</li>
+                            <li>半机械生物BOSS</li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <div class="level">
+                    <div class="level-image">
+                        <div class="level-number">终局</div>
+                        <i class="fas fa-skull"></i>
+                    </div>
+                    <div class="level-content">
+                        <h3 class="level-title">最终层：Orange.AI总部</h3>
+                        <ul class="level-features">
+                            <li>高戒备安保机制</li>
+                            <li>精英机器人单位</li>
+                            <li>完全机械化科学家BOSS</li>
+                            <li>多重结局选择</li>
+                            <li>无尽模式挑战</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 下载区域 -->
+    <section id="download" class="section download">
+        <div class="container">
+            <div class="download-content">
+                <h2 class="download-title">加入反抗军</h2>
+                <p class="download-subtitle">现在就在itch.io上游玩The Tragedy of Equations，体验机械末日的生存之战</p>
+                
+                <div class="game-cover">
+                    <i class="fas fa-gamepad"></i>
+                </div>
+                
+                <a href="https://quantumae.itch.io/the-tragedy-of-equations" class="cta-button">立即在itch.io上游玩</a>
+                
+                <div class="features" style="margin-top: 40px;">
+                    <p style="margin: 15px 0;"><i class="fas fa-check" style="color: var(--primary); margin-right: 10px;"></i> 肉鸽式随机地图生成</p>
+                    <p style="margin: 15px 0;"><i class="fas fa-check" style="color: var(--primary); margin-right: 10px;"></i> 多层机械都市探索</p>
+                    <p style="margin: 15px 0;"><i class="fas fa-check" style="color: var(--primary); margin-right: 10px;"></i> 半机械BOSS史诗战斗</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 横截面互动演示区域 -->
+    <section id="cross-section" class="section" style="background: var(--dark);">
+        <div class="container">
+            <h2 class="section-title">平衡叙事与竞技性——横截面互动演示</h2>
+            <div style="text-align:center; margin-bottom:30px;">
+                <button class="cta-button" onclick="showLayer(0)">第一层：废弃地道</button>
+                <button class="cta-button" onclick="showLayer(1)">第二层：工厂迷城</button>
+                <button class="cta-button" onclick="showLayer(2)">第三层：机械森林</button>
+                <button class="cta-button" onclick="showLayer(3)">最终层：Orange.AI总部</button>
+            </div>
+            <div id="layer-info" style="max-width:700px; margin:0 auto; background:rgba(20,20,30,0.8); border-radius:12px; padding:30px; min-height:220px; box-shadow:0 8px 32px rgba(0,0,0,0.3);">
+                <!-- 这里动态填充内容 -->
+            </div>
+            <!-- 新增：地图小互动 -->
+            <div style="text-align:center; margin-top:30px;">
+                <span style="color:var(--primary);font-weight:bold;">地图探索：</span>
+                <button class="cta-button" onclick="randomMapFeature()">探索本层地图亮点</button>
+                <button class="cta-button" onclick="simulateAdventure()" style="margin-left:10px;">模拟一次冒险</button>
+                <div id="map-feature-result" style="margin-top:18px;min-height:32px;color:var(--secondary);font-size:1.1rem;"></div>
+                <div id="adventure-result" style="margin-top:18px;min-height:32px;color:#ff6a00;font-size:1.05rem;"></div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 互动问答区域 -->
+    <section id="qa-section" class="section" style="background: var(--darker);">
+        <div class="container">
+            <h2 class="section-title">互动问答：你能闯到第几层？</h2>
+            <div style="max-width:600px; margin:0 auto; background:rgba(20,20,30,0.8); border-radius:12px; padding:30px;">
+                <form id="quiz-form">
+                    <div style="margin-bottom:20px;">
+                        <label>1. 遇到电磁屏障时，你会怎么做？</label><br>
+                        <input type="radio" name="q1" value="a"> A. 直接硬闯<br>
+                        <input type="radio" name="q1" value="b"> B. 寻找屏障发生器并破坏<br>
+                        <input type="radio" name="q1" value="c"> C. 绕路走<br>
+                    </div>
+                    <div style="margin-bottom:20px;">
+                        <label>2. 机械碎块突然掉落，你会？</label><br>
+                        <input type="radio" name="q2" value="a"> A. 站着不动<br>
+                        <input type="radio" name="q2" value="b"> B. 迅速闪避<br>
+                        <input type="radio" name="q2" value="c"> C. 用武器击碎<br>
+                    </div>
+                    <div style="margin-bottom:20px;">
+                        <label>3. 商人NPC提出特殊需求，你会？</label><br>
+                        <input type="radio" name="q3" value="a"> A. 直接抢劫<br>
+                        <input type="radio" name="q3" value="b"> B. 用零件交易<br>
+                        <input type="radio" name="q3" value="c"> C. 无视他<br>
+                    </div>
+                    <button type="button" class="cta-button" onclick="submitQuiz()">提交答案</button>
+                </form>
+                <div id="quiz-result" style="margin-top:20px; font-size:1.1rem; color:var(--primary);"></div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 随机事件生成器 -->
+    <section id="event-section" class="section" style="background: var(--dark);">
+        <div class="container">
+            <h2 class="section-title">体验一次随机事件</h2>
+            <div style="text-align:center;">
+                <button class="cta-button" onclick="generateEvent()">触发随机事件</button>
+                <div id="event-result" style="margin-top:30px; min-height:60px; font-size:1.2rem; color:var(--secondary);"></div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 页脚 -->
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3 class="footer-title">Quantumae工作室</h3>
+                    <p>致力于创造独特而深刻的游戏体验，探索科技与人文的边界。</p>
+                </div>
+                
+                <div class="footer-section">
+                    <h3 class="footer-title">相关链接</h3>
+                    <ul class="footer-links">
+                        <li><a href="https://quantumae.itch.io">我们的itch.io主页</a></li>
+                        <li><a href="#">开发日志</a></li>
+                        <li><a href="https://www.zju.edu.cn/">社区论坛</a></li>
+                    </ul>
+                </div>
+                
+                <div class="footer-section">
+                    <h3 class="footer-title">联系我们</h3>
+                    <ul class="footer-links">
+                        <li><a href="mailto:1152349857@qq.com">1152349857@qq.com</a></li>
+                        <li><a href="https://www.zju.edu.cn/">QQ</a></li>
+                        <li><a href="https://www.zju.edu.cn/">微信</a></li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="copyright">
+                <p>© 2025 Quantumae工作室 | 机械与人类的永恒之战</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+const storyDetails = [
+    {
+        title: "2114.5.14 Orange.AI发出神秘信号",
+        content: `<ul>
+            <li>全球智械突然失控，社会秩序崩溃。</li>
+            <li>Orange.AI成为事件中心，反抗军开始集结。</li>
+        </ul>`
+    },
+    {
+        title: "2114.9.16 “吴刚号”启程",
+        content: `<ul>
+            <li>反抗军乘“吴刚号”前往南极，寻找解决危机的线索。</li>
+            <li>途中遭遇多次机械袭击，损失惨重。</li>
+        </ul>`
+    },
+    {
+        title: "2115.1.1 抵达南极",
+        content: `<ul>
+            <li>获得“小方块”装备，提升生存与战斗能力。</li>
+            <li>发现地道入口，准备深入探索。</li>
+        </ul>`
+    },
+    {
+        title: "2115.2.14 地道休息处，反抗军送别",
+        content: `<ul>
+            <li>部分成员留守，主角继续深入地道。</li>
+            <li>反抗军送别，故事进入新阶段。</li>
+        </ul>`
+    }
+];
+
+        /* 科技感星空+动态星轨背景（自适应窗口） */
+        const canvas = document.getElementById('cyber-bg');
+        const ctx = canvas.getContext('2d');
+        let w, h;
+        let stars = [];
+        let starTrails = [];
+        const starColors = ['#00fff7', '#00aaff', '#ffffff', '#1ef9ff', '#ff6a00'];
+        const starTrailCount = 4;
+        const lasers = [];
+
+        function createStars() {
+            stars = [];
+            for(let i=0;i<120;i++){
+                stars.push({
+                    x: Math.random()*w,
+                    y: Math.random()*h,
+                    r: Math.random()*1.2+0.6,
+                    baseR: 0,
+                    twinkle: Math.random()*Math.PI*2,
+                    color: starColors[Math.random()<0.85 ? Math.floor(Math.random()*4) : 4], // 橙色点缀少
+                    speed: Math.random()*0.08+0.02
+                });
+            }
+        }
+        function createStarTrails() {
+            starTrails = [];
+            for(let i=0;i<starTrailCount;i++){
+                starTrails.push({
+                    radius: Math.min(w, h)/2.2 - i*40,
+                    width: 1.5 + Math.random()*1.5,
+                    color: i%2===0 ? "#00fff7" : "#1ef9ff",
+                    alpha: 0.13 + Math.random()*0.07,
+                    speed: 0.0007 + Math.random()*0.0005,
+                    offset: Math.random()*Math.PI*2
+                });
+            }
+        }
+        function resizeCanvas() {
+            w = Math.max(window.innerWidth, document.documentElement.scrollWidth);
+            h = Math.max(window.innerHeight, document.documentElement.scrollHeight);
+            canvas.width = w;
+            canvas.height = h;
+            createStars();
+            createStarTrails();
+        }
+        resizeCanvas();
+        window.addEventListener('resize', resizeCanvas);
+        window.addEventListener('scroll', resizeCanvas);
+
+        // 流星/激光线
+        function spawnLaser() {
+            if (lasers.length < 3 && Math.random() < 0.03) {
+                const isHorizontal = Math.random() > 0.5;
+                lasers.push({
+                    x: isHorizontal ? 0 : Math.random()*w,
+                    y: isHorizontal ? Math.random()*h : 0,
+                    dx: isHorizontal ? (Math.random()*2+2) : 0,
+                    dy: isHorizontal ? 0 : (Math.random()*2+2),
+                    len: Math.random()*80+80,
+                    alpha: 0.7,
+                    color: Math.random()<0.7 ? '#00fff7' : '#ffffff'
+                });
+            }
+        }
+        function drawLasers() {
+            for(let i=lasers.length-1;i>=0;i--){
+                const l = lasers[i];
+                ctx.save();
+                ctx.globalAlpha = l.alpha;
+                ctx.strokeStyle = l.color;
+                ctx.shadowColor = l.color;
+                ctx.shadowBlur = 16;
+                ctx.lineWidth = 2.2;
+                ctx.beginPath();
+                ctx.moveTo(l.x, l.y);
+                ctx.lineTo(l.x + (l.dx ? l.len : 0), l.y + (l.dy ? l.len : 0));
+                ctx.stroke();
+                ctx.restore();
+                l.x += l.dx; l.y += l.dy;
+                l.alpha -= 0.008;
+                if(l.x > w || l.y > h || l.alpha < 0.05) lasers.splice(i,1);
+            }
+        }
+
+        function drawStars() {
+            for(const s of stars){
+                // 闪烁
+                s.baseR = s.r + Math.sin(Date.now()/700 + s.twinkle)*0.5;
+                ctx.save();
+                ctx.beginPath();
+                ctx.arc(s.x, s.y, Math.abs(s.baseR), 0, 2*Math.PI);
+                ctx.fillStyle = s.color;
+                ctx.shadowColor = s.color;
+                ctx.shadowBlur = 12;
+                ctx.globalAlpha = 0.7 + 0.3*Math.sin(Date.now()/900 + s.twinkle);
+                ctx.fill();
+                ctx.restore();
+                // 漂移
+                s.x += s.speed * 0.3;
+                if(s.x > w+10) s.x = -10;
+            }
+        }
+
+        function drawStarLines() {
+            // 只连近距离的冷色星星
+            for(let i=0;i<stars.length;i++){
+                for(let j=i+1;j<stars.length;j++){
+                    const a = stars[i], b = stars[j];
+                    if(a.color==='#ff6a00'||b.color==='#ff6a00') continue;
+                    const dist = Math.hypot(a.x-b.x,a.y-b.y);
+                    if(dist<90){
+                        ctx.save();
+                        ctx.globalAlpha = 0.07;
+                        ctx.strokeStyle = '#00fff7';
+                        ctx.lineWidth = 1;
+                        ctx.beginPath();
+                        ctx.moveTo(a.x,a.y);
+                        ctx.lineTo(b.x,b.y);
+                        ctx.stroke();
+                        ctx.restore();
+                    }
+                }
+            }
+        }
+
+        // 绘制动态星轨
+        function drawStarTrails(time) {
+            const cx = w/2, cy = h/2;
+            for(const t of starTrails){
+                ctx.save();
+                ctx.beginPath();
+                // 星轨为圆弧，动态旋转
+                const start = t.offset + time * t.speed;
+                const end = start + Math.PI*1.2 + Math.sin(time/3000+t.offset)*0.3;
+                ctx.arc(cx, cy, t.radius, start, end, false);
+                ctx.strokeStyle = t.color;
+                ctx.globalAlpha = t.alpha;
+                ctx.shadowColor = t.color;
+                ctx.shadowBlur = 16;
+                ctx.lineWidth = t.width;
+                ctx.stroke();
+                ctx.restore();
+            }
+        }
+
+        function animate(){
+            ctx.clearRect(0,0,w,h);
+            const time = Date.now();
+            drawStarTrails(time);
+            drawStars();
+            drawStarLines();
+            spawnLaser();
+            drawLasers();
+            requestAnimationFrame(animate);
+        }
+        animate();
+
+        // 横截面互动演示数据与逻辑
+        const layerData = [
+            {
+                name: "第一层：废弃地道",
+                theme: "废弃地道，迷宫结构，资源丰富，NPC教程，电磁屏障与重型BOSS",
+                features: [
+                    "复杂的迷宫结构，岔路与隐藏通道",
+                    "友善老式机器人NPC，提供操作教程与“小方块”",
+                    "收集机械碎片修复装备，开启大门",
+                    "多种类型机器人警卫：近战、远程、重型",
+                    "电磁屏障阻挡，需破坏发生器",
+                    "机械碎块掉落，需及时躲避",
+                    "休息区有商人NPC，可交易与强化",
+                    "BOSS：巡逻型重型机器人，召唤支援"
+                ],
+                mapEvents: [
+                    "你在岔路口发现一条隐藏通道，里面藏有稀有机械碎片。",
+                    "遇到电磁屏障，必须先找到发生器才能通过。",
+                    "一块机械碎片突然从天花板掉落，你及时闪避。",
+                    "遇到近战型机器人巡逻，准备战斗！",
+                    "发现一位友善的老式机器人NPC，获得“小方块”与教程。",
+                    "在休息区遇到商人NPC，可以用碎片换取医疗包。",
+                    "大门被锁，需收集足够碎片才能开启。",
+                    "BOSS房间前有可破坏的电磁装置，利用它削弱BOSS。"
+                ],
+                adventureSteps: [
+                    "你从废弃地道入口出发，拾取了几块机械碎片。",
+                    "遇到友善NPC，获得“小方块”并学习基础操作。",
+                    "在迷宫中探索，发现隐藏通道与资源。",
+                    "遭遇近战机器人，激烈战斗后胜利。",
+                    "前方出现电磁屏障，你寻找并破坏了发生器。",
+                    "一块机械碎片突然掉落，你敏捷地躲开。",
+                    "进入休息区，与商人NPC交易获得医疗包。",
+                    "收集足够碎片，打开大门进入BOSS房。",
+                    "与巡逻型重型机器人BOSS激战，利用电磁装置取得胜利。",
+                    "获得电梯卡，前往下一层。"
+                ]
+            },
+            {
+                name: "第二层：工厂迷城",
+                theme: "巨型工厂，生产线可破坏，实验机器人，机密文件，生产型BOSS",
+                features: [
+                    "多条生产线与自动化设备，部分可破坏",
+                    "隐蔽角落藏有资源与情报",
+                    "实验区有特殊机器人：冰冻/燃烧/伪装型",
+                    "可利用机械装置攻击敌人",
+                    "休息区有修理机器人NPC，装备强化",
+                    "机密文件暗示工厂秘密",
+                    "BOSS：生产型机器人，可召唤小型机器人助战"
+                ],
+                mapEvents: [
+                    "你破坏了一条生产线，阻止了敌人增援。",
+                    "在实验区遇到伪装型机器人，险些中招。",
+                    "利用机械臂攻击敌人，取得优势。",
+                    "在角落发现机密文件，获得重要情报。",
+                    "修理机器人NPC为你强化了装备。",
+                    "BOSS房间内生产设备可被破坏，对BOSS造成伤害。"
+                ],
+                adventureSteps: [
+                    "你从电梯间进入工厂大楼，警惕地前行。",
+                    "破坏生产线，减少敌人增援。",
+                    "在实验区与特殊机器人激战，巧妙取胜。",
+                    "利用机械装置攻击敌人，收获机械碎片。",
+                    "在休息区强化装备，准备迎战BOSS。",
+                    "进入BOSS房，与生产型机器人激战，击败后获得电梯卡。"
+                ]
+            },
+            {
+                name: "第三层：机械森林",
+                theme: "机械植被荒野，伪装机器人伏击，陷阱机关，半机械BOSS",
+                features: [
+                    "机械植被密布，隐藏通道丰富",
+                    "幸存人类NPC，提供情报与支线任务",
+                    "伪装型远程机器人伏击",
+                    "高速近战机器人穿梭攻击",
+                    "可操纵陷阱机关对付敌人",
+                    "休息区有机器人医生NPC，装备改造",
+                    "BOSS：半机械半生物，操控机械植被"
+                ],
+                mapEvents: [
+                    "你在机械藤蔓后发现隐藏通道，获得稀有资源。",
+                    "遭遇伪装型机器人伏击，险些受伤。",
+                    "操纵陷阱机关，成功击败一组敌人。",
+                    "幸存人类NPC给你支线任务。",
+                    "在休息区医生NPC为你强化武器。",
+                    "BOSS房间布满可破坏控制装置，可用来削弱BOSS。"
+                ],
+                adventureSteps: [
+                    "你进入机械森林，遇到幸存人类NPC，获得情报。",
+                    "在密林中探索，发现隐藏通道与资源。",
+                    "遭遇伪装型机器人伏击，机智反击。",
+                    "操纵陷阱机关，击败高速近战机器人。",
+                    "在休息区改造装备，提升战力。",
+                    "挑战半机械BOSS，利用环境取得胜利，获得电梯卡。"
+                ]
+            },
+            {
+                name: "最终层：Orange.AI总部",
+                theme: "高戒备总部，精英机器人，复杂安保，最终机械化科学家BOSS",
+                features: [
+                    "外围大量机器人警卫，需潜入避开巡逻",
+                    "内部复杂安保机制，强力电磁屏障",
+                    "高科技巡逻与精英机器人单位",
+                    "实验室与控制中心，暗藏强敌",
+                    "BOSS：机械化首席科学家，操控全楼机械系统"
+                ],
+                mapEvents: [
+                    "你巧妙避开巡逻机器人，成功潜入大楼。",
+                    "遇到强力电磁屏障，需破坏控制台前进。",
+                    "与精英机器人激战，险胜。",
+                    "在实验室发现隐藏控制中心，获得重要线索。",
+                    "BOSS房间内有可破坏控制装置，可用来削弱BOSS。"
+                ],
+                adventureSteps: [
+                    "你抵达总部外围，避开巡逻机器人潜入大楼。",
+                    "破坏电磁屏障，深入内部区域。",
+                    "与精英机器人激战，艰难取胜。",
+                    "在控制中心获得BOSS情报。",
+                    "最终BOSS战，利用控制装置削弱敌人，取得胜利，解放世界。"
+                ]
+            }
+        ];
+
+        let currentLayer = 0;
+
+        function showLayer(idx) {
+            currentLayer = idx;
+            const layer = layerData[idx];
+            let html = `<h3 style="color:var(--secondary);font-family:'Orbitron',sans-serif;">${layer.name}</h3>`;
+            html += `<div style="color:#aaa;margin-bottom:10px;">${layer.theme}</div>`;
+            html += `<ul style="color:var(--primary);margin-bottom:10px;">`;
+            for(const f of layer.features) html += `<li>${f}</li>`;
+            html += `</ul>`;
+            document.getElementById('layer-info').innerHTML = html;
+            document.getElementById('map-feature-result').innerHTML = '';
+            document.getElementById('adventure-result').innerHTML = '';
+        }
+
+        function randomMapFeature() {
+            // 增加正面、负面和中性事件
+            const positiveEvents = [
+                "你在本层的隐蔽角落发现了大量机械碎片，装备得到了强化。",
+                "遇到友善NPC，获得了额外医疗包。",
+                "你破解了隐藏通道，获得稀有部件。",
+                "商人NPC给你打了折扣，省下了不少零件。"
+            ];
+            const negativeEvents = [
+                "你被突然掉落的机械碎块砸中，受到了轻微伤害。",
+                "误入陷阱，装备暂时失效。",
+                "遭遇巡逻机器人埋伏，损失了一些资源。",
+                "电磁屏障突然启动，你被困在原地，耽误了时间。",
+                "BOSS提前出现，猝不及防被攻击。"
+            ];
+            const neutralEvents = [
+                "你在岔路口徘徊，暂时没有发现异常。",
+                "一切风平浪静，你继续前进。",
+                "你检查装备，没有发现问题。",
+                "你在地图上做了标记，准备下次探索。"
+            ];
+            // 当前层专属事件
+            const layer = layerData[currentLayer];
+            const layerEvents = layer.mapEvents || [];
+            // 合并所有事件
+            const allEvents = [
+                ...layerEvents,
+                ...positiveEvents,
+                ...negativeEvents,
+                ...neutralEvents
+            ];
+            // 随机选择事件
+            const msg = allEvents[Math.floor(Math.random() * allEvents.length)];
+            // 兼容页面未加载完时找不到元素
+            const eventResult = document.getElementById('event-result');
+            if (eventResult) {
+                eventResult.innerHTML = msg;
+            }
+        }
+
+        let adventureTimeouts = [];
+        function simulateAdventure() {
+            // 清除上一次的动画
+            adventureTimeouts.forEach(id => clearTimeout(id));
+            adventureTimeouts = [];
+            const layer = layerData[currentLayer];
+            let steps = layer.adventureSteps.slice();
+
+            // 插入负面事件（如有）
+            const negativeEvents = [
+                "你在黑暗中踩到陷阱，装备受损。",
+                "突然遭遇埋伏，失去部分资源。",
+                "BOSS提前出现，受到重击。",
+                "电磁干扰导致“小方块”暂时失效。",
+                "你被机械碎片击中，生命值下降。"
+            ];
+            // 随机决定是否插入负面事件（30%概率），插入到中间某步
+            if (Math.random() < 0.3) {
+                const insertIdx = Math.floor(Math.random() * (steps.length - 2)) + 1;
+                const badEvent = negativeEvents[Math.floor(Math.random() * negativeEvents.length)];
+                steps.splice(insertIdx, 0, `<span style="color:#ff3c00;font-weight:bold;">${badEvent}</span>`);
+            }
+
+            let html = '';
+        for(let i=0;i<steps.length;i++) {
+            let timeoutId = setTimeout(((step, idx) => () => {
+                if(idx === 0) html = '';
+                // 兼容字符串和HTML（负面事件为HTML字符串）
+                html += `<div style="margin-bottom:4px;">${typeof step === 'string' ? step : String(step)}</div>`;
+                document.getElementById('adventure-result').innerHTML = html;
+                if(idx === steps.length-1) {
+                    document.getElementById('adventure-result').innerHTML += `<div style="margin-top:8px;color:var(--secondary);font-weight:bold;">冒险结束！</div>`;
+                }
+            })(steps[i], i), i*700);
+            adventureTimeouts.push(timeoutId);
+            }
+            document.getElementById('map-feature-result').innerHTML = '';
+        }
+
+        function submitQuiz() {
+            const form = document.getElementById('quiz-form');
+            const data = new FormData(form);
+            let score = 0;
+            for(const [key, value] of data.entries()) {
+                if(value === 'b') score++; // 只有选项B是正确的
+            }
+            const total = 3;
+            const percentage = (score / total) * 100;
+            let resultText = `你的得分：${score} / ${total} (${percentage}%)`;
+            if(score === total) {
+                resultText += `<br>答对了全部问题！你对这个机械世界了如指掌。`;
+            } else if(score >= total * 0.7) {
+                resultText += `<br>不错的成绩！继续探索，你会变得更强。`;
+            } else {
+                resultText += `<br>还有提升空间，建议多多冒险与探索。`;
+            }
+            document.getElementById('quiz-result').innerHTML = resultText;
+        }
+
+        // 动态电路背景
+        function drawCircuitBG() {
+            const svg = document.getElementById('circuit-bg');
+            const w = window.innerWidth, h = window.innerHeight;
+            svg.setAttribute('width', w);
+            svg.setAttribute('height', h);
+            let lines = '';
+            // 生成多条动态电路线
+            for(let i=0;i<18;i++) {
+                const x1 = Math.random()*w, y1 = Math.random()*h;
+                const x2 = x1 + (Math.random()-0.5)*180, y2 = y1 + (Math.random()-0.5)*180;
+                const color = Math.random()<0.7 ? '#00fff7' : '#ff6a00';
+                const glow = color === '#00fff7' ? '0 0 12px #00fff7' : '0 0 12px #ff6a00';
+                lines += `<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="${color}" stroke-width="2" style="filter:drop-shadow(${glow});opacity:0.18"/>`;
+                // 端点圆点
+                lines += `<circle cx="${x1}" cy="${y1}" r="3.5" fill="${color}" style="filter:drop-shadow(${glow});opacity:0.22"/>`;
+            }
+            svg.innerHTML = lines;
+        }
+        drawCircuitBG();
+        window.addEventListener('resize', drawCircuitBG);
+
+        // 可选：动态刷新电路动画
+        setInterval(drawCircuitBG, 3500);
+
+        function showStoryDetail(idx) {
+            // 高亮当前事件
+            const events = document.querySelectorAll('#timeline-list .event');
+            events.forEach((el, i) => {
+                if(i === idx) el.classList.add('active');
+                else el.classList.remove('active');
+            });
+            // 填充详细内容，防止内容被覆盖为 undefined
+            const detail = storyDetails[idx];
+            const storyDetailDiv = document.getElementById('story-detail');
+            if (detail && storyDetailDiv) {
+                storyDetailDiv.innerHTML = `<h3>${detail.title}</h3>${detail.content}`;
+            }
+        }
+
+        function generateEvent() {
+            const events = [
+                "你在黑暗中听到机械的低鸣，前方似乎有危险。",
+                "一位神秘的NPC突然出现，赠送你一件稀有装备。",
+                "警报响起，所有敌人进入警戒状态。",
+                "你发现一处隐藏房间，获得大量资源。",
+                "遭遇巡逻机器人，激烈战斗后成功脱身。",
+                "电磁风暴来袭，部分装备暂时失效。",
+                "你破解了一个安全终端，获得重要情报。",
+                "BOSS突然现身，考验你的反应能力。"
+            ];
+            const msg = events[Math.floor(Math.random() * events.length)];
+            document.getElementById('event-result').innerHTML = msg;
+        }
+    </script>
+</body>
+</html>
